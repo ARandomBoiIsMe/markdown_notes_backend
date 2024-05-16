@@ -1,3 +1,5 @@
+import os
+
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -136,7 +138,6 @@ def upload_note():
     with open(filename, 'r') as f:
         content = f.read()
 
-    import os
     os.remove(filename)
     # ------------------
 
@@ -278,7 +279,6 @@ def get_user(username):
 
 if __name__ == '__main__':
     app.run(
-        host="127.0.0.1",
-        port=5000,
-        debug=True
+        host="0.0.0.0",
+        port=os.environ.get('PORT') or 4000
     )
