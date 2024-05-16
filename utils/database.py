@@ -125,14 +125,11 @@ def get_session(connection, id):
     return cursor.fetchone()
 
 def store_session(connection, session, user, current_time):
-    session_ = get_session(connection, session)
+    cursor = connection.cursor()
 
     # Deletes old user session
-    if session_:
-        cursor.execute("DELETE FROM sessions WHERE session_id = ?", (session,))
-        connection.commit()
-
-    cursor = connection.cursor()
+    cursor.execute("DELETE FROM sessions WHERE user = ?", (user['username'],))
+    connection.commit()
 
     query = "INSERT INTO sessions (session_id, user, login_time) VALUES (?, ?, ?)"
     values = (session, user['username'], current_time)
