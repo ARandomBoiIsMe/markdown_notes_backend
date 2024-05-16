@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 from flask import Flask, request, jsonify, make_response, redirect
 from flask_cors import CORS
 
-from utils import database, authentication
+from utils import database, authentication, converter
 
 CONNECTION = database.connect_to_db()
 
@@ -162,6 +162,9 @@ def get_note(id):
     if ((not session or session['user'] != note['user']) and note['view'] == 'private'):
         return jsonify({'message': 'Unauthorized viewing of private notes is not allowed.'}), 401
 
+    # Returns HTML of markdown text
+    note['content'] = converter.markdown_to_html(note['content'])
+
     return jsonify(
         {
             'note': {
@@ -238,7 +241,6 @@ def get_self():
                 {
                     'id': note['id'],
                     'title': note['title'],
-                    'content': note['content'],
                     'created_at': note['created_at'],
                     'updated_at': note['updated_at']
                 } for note in me if note['id']
@@ -267,7 +269,6 @@ def get_user(username):
                 {
                     'id': note['id'],
                     'title': note['title'],
-                    'content': note['content'],
                     'created_at': note['created_at'],
                     'updated_at': note['updated_at']
                 } for note in user if note['view'] == 'public'
