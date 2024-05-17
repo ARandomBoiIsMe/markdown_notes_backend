@@ -165,6 +165,7 @@ def get_note(id):
 
     # Returns HTML of markdown text
     note['content'] = converter.markdown_to_html(note['content'])
+    note['content'] = note['content'].replace('\n', '')
 
     return jsonify(
         {
